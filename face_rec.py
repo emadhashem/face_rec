@@ -11,13 +11,14 @@ import urllib.request
 
 def get_encoded_faces(faces):
     """
-    looks through the faces folder and encodes all
+    looks through the faces encodes all
     the faces
 
     :return: dict of (name, image encoded)
     """
     encoded = {}
     for fnames in faces:
+	
         response = urllib.request.urlopen(faces[fnames])
         face = fr.load_image_file(response)
         encoding = fr.face_encodings(face)[0]
@@ -38,8 +39,6 @@ def classify_face(im, urlFaces):
     """
     will find all of the faces in a given image and label
     them if it knows what they are
-
-    :param im: str of file path
     :return: list of face names
     """
     faces = get_encoded_faces(urlFaces)
@@ -48,12 +47,6 @@ def classify_face(im, urlFaces):
     # get image from url 
     
     img = url_to_image(im)
-    ##############
-
-
-    # img = cv2.imread(im, 1)
-    #img = cv2.resize(img, (0, 0), fx=0.5, fy=0.5)
-    #img = img[:,:,::-1]
  
     face_locations = face_recognition.face_locations(img)
     unknown_face_encodings = face_recognition.face_encodings(img, face_locations)
@@ -71,24 +64,7 @@ def classify_face(im, urlFaces):
             name = known_face_names[best_match_index]
 
         face_names.append(name)
-        
-        for (top, right, bottom, left), name in zip(face_locations, face_names):
-            # Draw a box around the face
-            cv2.rectangle(img, (left-20, top-20), (right+20, bottom+20), (255, 0, 0), 2)
-
-            # Draw a label with a name below the face
-            cv2.rectangle(img, (left-20, bottom -15), (right+20, bottom+20), (255, 0, 0), cv2.FILLED)
-            font = cv2.FONT_HERSHEY_DUPLEX
-            cv2.putText(img, name, (left -20, bottom + 15), font, 1.0, (255, 255, 255), 2)
+  
     return face_names
-
-    # Display the resulting image
-    # while True:
-
-    #     cv2.imshow('Video', img)
-    #     if cv2.waitKey(1) & 0xFF == ord('q'):
-    #         return face_names 
-# img = 'https://i.insider.com/5b578baf7708e966e10ff2b6?width=1000&format=jpeg&auto=webp'
-# print(classify_face(img))
 
 
